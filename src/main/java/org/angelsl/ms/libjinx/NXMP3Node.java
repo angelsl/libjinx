@@ -52,6 +52,7 @@ public class NXMP3Node extends NXNode<byte[]> {
 
     @Override
     public byte[] getValue() {
+        if(_bmOffset == -1) return null;
         try {
             if (_value == null) {
                 _ler.seek(_bmOffset);

@@ -146,10 +146,10 @@ public class NXFile {
                 ret = new NXNode<Point>(name, _ler.readPos(), this, parent);
                 break;
             case 5:
-                ret = new NXCanvasNode(name, this, parent, _ler, _bmpOffTbl.length > 0 ? _bmpOffTbl[(int) _ler.readUInt()] : -1);
+                ret = new NXCanvasNode(name, this, parent, _ler, _bmpOffTbl.length > 0 ? _bmpOffTbl[(int) _ler.readUInt()] : (-1 + (0*_ler.readUInt())));
                 break;
             case 6:
-                ret = new NXMP3Node(name, this, parent, _ler, _mp3OffTbl.length > 0 ? _mp3OffTbl[(int) _ler.readUInt()] : -1);
+                ret = new NXMP3Node(name, this, parent, _ler, _mp3OffTbl.length > 0 ? _mp3OffTbl[(int) _ler.readUInt()] : (-1 + (0*_ler.readUInt())));
                 break;
             case 7:
                 ret = new NXLinkNode(name, (int) _ler.readUInt(), this, parent);
