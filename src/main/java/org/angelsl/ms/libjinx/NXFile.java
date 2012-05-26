@@ -122,6 +122,7 @@ public class NXFile {
         _ler.seek(baseNodeOffset);
         _nodeTbl = new NXNode<?>[(int) nodeCount];
         _baseNode = ParseNode(null);
+        _strTbl = null; _bmpOffTbl = null; _mp3OffTbl = null;
     }
 
     private NXNode<?> ParseNode(NXNode<?> parent) throws IOException, NXException {
