@@ -38,73 +38,63 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UTFDataFormatException;
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 class LittleEndianReader {
-    private final RandomAccessFile bs;
+    private final ByteBuffer bs;
 
-    LittleEndianReader(RandomAccessFile bs) {
-        this.bs = bs;
+    LittleEndianReader(ByteBuffer bs) {
+        this.bs = bs.order(ByteOrder.LITTLE_ENDIAN);
     }
 
-    private int intlReadByte() throws IOException {
-        int ret = bs.read();
-        if (ret == -1) throw new IOException("End of stream reached.");
+    private int intlReadByte() throws BufferUnderflowException {
+        int ret = bs.get() & 0xFF;
         return ret;
     }
 
-    public byte readByte() throws IOException {
-        return bs.readByte();
+    public byte readByte() throws BufferUnderflowException {
+        return bs.get();
     }
 
-    public short readUByte() throws IOException {
-        return (short) intlReadByte();
+    public int readUByte() throws BufferUnderflowException {
+        return intlReadByte();
     }
 
-    public short readShort() throws IOException {
-        return (short) (intlReadByte() + (intlReadByte() << 8));
+    public short readShort() throws BufferUnderflowException {
+        return bs.getShort();
     }
 
-    public int readUShort() throws IOException {
-        return (intlReadByte() + (intlReadByte() << 8));
+    public int readUShort() throws BufferUnderflowException {
+        return bs.getShort() & 0xFFFF;
     }
 
-    public int readInt() throws IOException {
-        return intlReadByte() + (intlReadByte() << 8) + (intlReadByte() << 16) + (intlReadByte() << 24);
+    public int readInt() throws BufferUnderflowException {
+        return bs.getInt();
     }
 
-    public long readUInt() throws IOException {
-        return intlReadByte() + (intlReadByte() << 8) + (intlReadByte() << 16) + (intlReadByte() << 24);
+    public long readUInt() throws BufferUnderflowException {
+        return ((long)bs.getInt()) & 0xFFFFFFFFL;
     }
 
-    public char readChar() throws IOException {
-        return (char) readShort();
+    public long readLong() throws BufferUnderflowException {
+        return bs.getLong();
     }
 
-    public long readLong() throws IOException {
-        long byte1 = intlReadByte();
-        long byte2 = intlReadByte();
-        long byte3 = intlReadByte();
-        long byte4 = intlReadByte();
-        long byte5 = intlReadByte();
-        long byte6 = intlReadByte();
-        long byte7 = intlReadByte();
-        long byte8 = intlReadByte();
-        return (byte8 << 56) + (byte7 << 48) + (byte6 << 40) + (byte5 << 32) + (byte4 << 24) + (byte3 << 16) + (byte2 << 8) + byte1;
-    }
-
-    public float readFloat() throws IOException {
+    public float readFloat() throws BufferUnderflowException {
         return Float.intBitsToFloat(readInt());
     }
 
-    public double readDouble() throws IOException {
+    public double readDouble() throws BufferUnderflowException {
         return Double.longBitsToDouble(readLong());
     }
 
-    public final String readNXUTFString() throws IOException {
+    public final String readNXUTFString() throws UTFDataFormatException, BufferUnderflowException {
         return readUTF(this);
     }
 
-    public byte[] read(int num) throws IOException {
+    public byte[] read(int num) throws BufferUnderflowException {
         byte[] ret = new byte[num];
         for (int x = 0; x < num; x++) {
             ret[x] = readByte();
@@ -112,18 +102,19 @@ class LittleEndianReader {
         return ret;
     }
 
-    public final Point readPos() throws IOException {
+    public final Point readPos() throws BufferUnderflowException {
         final int x = readInt();
         final int y = readInt();
         return new Point(x, y);
     }
 
-    public void skip(int num) throws IOException {
-        bs.skipBytes(num);
+    public void skip(int num) throws IllegalArgumentException {
+        bs.position(bs.position() + num);
     }
 
-    public void seek(long offset) throws IOException {
-        bs.seek(offset);
+    public void seek(long offset) throws BufferUnderflowException {
+        if(offset > Integer.MAX_VALUE) throw new IllegalArgumentException("Cannot seek to position more than 2147483647; Java limitation.");
+        bs.position((int)offset);
     }
 
     @Override
@@ -131,7 +122,7 @@ class LittleEndianReader {
         return bs.toString();
     }
 
-    private final static String readUTF(LittleEndianReader in) throws IOException {
+    private final static String readUTF(LittleEndianReader in) throws BufferUnderflowException, UTFDataFormatException {
         int utflen = in.readUShort();
         byte[] bytearr = new byte[utflen];
         char[] chararr = new char[utflen];
@@ -141,7 +132,7 @@ class LittleEndianReader {
         int count = 0;
         int chararr_count = 0;
 
-        in.bs.readFully(bytearr, 0, utflen);
+        in.bs.get(bytearr, 0, utflen);
 
         while (count < utflen) {
             c = (int) bytearr[count] & 0xff;

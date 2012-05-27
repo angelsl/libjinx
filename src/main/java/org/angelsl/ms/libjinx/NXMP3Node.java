@@ -35,6 +35,7 @@
 package org.angelsl.ms.libjinx;
 
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
 
 /**
  * An MP3 file in an NX file.
@@ -61,7 +62,7 @@ public class NXMP3Node extends NXNode<byte[]> {
                 _value = data;
                 return data;
             }
-        } catch (IOException i) {
+        } catch (BufferUnderflowException i) {
         }
         return null;
     }

@@ -38,6 +38,8 @@ import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.regex.Pattern;
 
 /**
@@ -46,7 +48,7 @@ import java.util.regex.Pattern;
 public class NXFile {
 
     private NXNode<?> _baseNode = null;
-    private final RandomAccessFile _file;
+    private final ByteBuffer _file;
     private final LittleEndianReader _ler;
     private String[] _strTbl = null;
     private long[] _bmpOffTbl = null;
@@ -55,6 +57,12 @@ public class NXFile {
 
     private int _nodeId = 0;
 
+    private static ByteBuffer getByteBuffer(String path) throws IOException
+    {
+        FileChannel fc = new RandomAccessFile(path, "r").getChannel();
+        return fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+    }
+
     /**
      * Constructs an NX file from the given path and parses the file immediately.
      *
@@ -62,7 +70,7 @@ public class NXFile {
      * @throws FileNotFoundException
      */
     public NXFile(String path) throws IOException, NXException {
-        this(new RandomAccessFile(path, "r"));
+        this(getByteBuffer(path));
     }
 
     /**
@@ -70,7 +78,7 @@ public class NXFile {
      *
      * @param file The RandomAccessFile representing the NX file
      */
-    public NXFile(RandomAccessFile file) throws IOException, NXException {
+    public NXFile(ByteBuffer file) throws IOException, NXException {
         _file = file;
         _ler = new LittleEndianReader(_file);
         Parse();
@@ -127,7 +135,7 @@ public class NXFile {
 
     private NXNode<?> ParseNode(NXNode<?> parent) throws IOException, NXException {
         String name = _strTbl[(int) _ler.readUInt()];
-        short type = _ler.readUByte();
+        int type = _ler.readUByte();
         NXNode<?> ret;
         switch (type & 0x7F) {
             case 0:
