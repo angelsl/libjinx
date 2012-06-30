@@ -42,8 +42,9 @@ extern "C" {
 // Simple Functions
 //****************************
 
-__declspec(dllexport) int LZ4_compress   (const char* source, char* dest, int isize);
-__declspec(dllexport) int LZ4_uncompress (const char* source, char* dest, int osize);
+
+int LZ4_compress   (const char* source, char* dest, int isize);
+int LZ4_uncompress (const char* source, char* dest, int osize);
 
 /*
 LZ4_compress() :
@@ -67,7 +68,7 @@ LZ4_uncompress() :
 // Advanced Functions
 //****************************
 
-__declspec(dllexport) int LZ4_compressBound(int isize);
+int LZ4_compressBound(int isize);
 
 /*
 LZ4_compressBound() :
@@ -80,7 +81,7 @@ LZ4_compressBound() :
 */
 
 
-__declspec(dllexport) int LZ4_uncompress_unknownOutputSize (const char* source, char* dest, int isize, int maxOutputSize);
+int LZ4_uncompress_unknownOutputSize (const char* source, char* dest, int isize, int maxOutputSize);
 
 /*
 LZ4_uncompress_unknownOutputSize() :
