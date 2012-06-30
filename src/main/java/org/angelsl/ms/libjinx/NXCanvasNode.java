@@ -36,16 +36,54 @@ package org.angelsl.ms.libjinx;
 
 // TODO: Canvas properties
 
+import java.awt.image.*;
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
+import com.github.decster.jnicompressions.Lz4Compression;
 /**
  * A bitmap in an NX file.
  */
-public class NXCanvasNode extends NXNode<NXNode.Nothing> {
+public class NXCanvasNode extends NXNode<BufferedImage> {
     private final LittleEndianReader _ler;
     private final long _bmOffset;
 
     NXCanvasNode(final String name, final NXFile file, final NXNode<?> parent, final LittleEndianReader ler, final long bmOffset) {
-        super(name, _nothing, file, parent);
+        super(name, null, file, parent);
         _ler = ler;
         _bmOffset = bmOffset;
+    }
+
+    @Override
+    public BufferedImage getValue() {
+        if(_bmOffset == -1) return null;
+        try {
+            if (_value == null) {
+                _ler.seek(_bmOffset);
+                int w = _ler.readUShort();
+                int h = _ler.readUShort();
+                long len = _ler.readUInt();
+                Lz4Compression c = new Lz4Compression();
+                ByteBuffer out = ByteBuffer.allocateDirect(w*h*4);
+                c.DecompressDirect(_ler.getBuffer(), (int)_bmOffset+4, (int)len + 4, out, 0);
+                out.rewind();
+                out.order(ByteOrder.LITTLE_ENDIAN);
+                BufferedImage bi = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
+                for(int H = 0; H < h; H++)
+                for(int W = 0; W < w; W++)
+                {
+                    int b = out.get();
+                    int g = out.get();
+                    int r = out.get();
+                    int a = out.get();
+                    bi.setRGB(W, H, (a << 24) | (r << 16) | (g << 8) | b);
+                }
+               return bi;
+            }
+            return _value;
+        } catch (BufferUnderflowException i) {
+        }
+        return null;
     }
 }

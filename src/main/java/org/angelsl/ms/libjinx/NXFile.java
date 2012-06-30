@@ -34,10 +34,13 @@
 
 package org.angelsl.ms.libjinx;
 
+import com.github.decster.jnicompressions.Lz4Compression;
+
+import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageOutputStream;
 import java.awt.*;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.regex.Pattern;
@@ -46,7 +49,6 @@ import java.util.regex.Pattern;
  * An NX file.
  */
 public class NXFile {
-
     private NXNode<?> _baseNode = null;
     private final ByteBuffer _file;
     private final LittleEndianReader _ler;
@@ -105,7 +107,7 @@ public class NXFile {
         for (String f : e) {
             if (f.equals(".")) continue;
             else if (f.equals("..")) r = _baseNode._parent;
-            else r = _baseNode.getChild(f);
+            else r = r.getChild(f);
             if (r == null) return null;
         }
         return r;

@@ -96,9 +96,7 @@ class LittleEndianReader {
 
     public byte[] read(int num) throws BufferUnderflowException {
         byte[] ret = new byte[num];
-        for (int x = 0; x < num; x++) {
-            ret[x] = readByte();
-        }
+        bs.get(ret);
         return ret;
     }
 
@@ -120,6 +118,10 @@ class LittleEndianReader {
     @Override
     public String toString() {
         return bs.toString();
+    }
+
+    public ByteBuffer getBuffer() {
+        return bs;
     }
 
     private final static String readUTF(LittleEndianReader in) throws BufferUnderflowException, UTFDataFormatException {

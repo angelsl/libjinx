@@ -16,6 +16,14 @@
         <connection>scm:git:git://github.com/angelsl/ms-libjinx.git</connection>
         <url>https://github.com/angelsl/ms-libjinx</url>
     </scm>
+    <dependencies>
+        <dependency>
+            <groupId>com.github.decster</groupId>
+            <artifactId>jnicompressions</artifactId>
+            <version>SL.1.1</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>

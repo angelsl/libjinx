@@ -62,6 +62,7 @@ public class NXMP3Node extends NXNode<byte[]> {
                 _value = data;
                 return data;
             }
+            return _value;
         } catch (BufferUnderflowException i) {
         }
         return null;
