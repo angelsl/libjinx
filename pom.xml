@@ -16,7 +16,6 @@
         <connection>scm:git:git://github.com/angelsl/ms-libjinx.git</connection>
         <url>https://github.com/angelsl/ms-libjinx</url>
     </scm>
-<<<<<<< HEAD
     <dependencies>
         <dependency>
             <groupId>com.github.decster</groupId>
@@ -25,8 +24,6 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
-=======
->>>>>>> 90b3c02a242d07b17d337e3570ff28d148d054d7
     <build>
         <plugins>
             <plugin>
