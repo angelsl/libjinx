@@ -34,6 +34,7 @@
 
 package org.angelsl.ms.libjinx;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -71,6 +72,10 @@ public class NXNode<T> implements Iterable<NXNode<?>> {
 		return _children.values().iterator();
 	}
 
+	public Collection<NXNode<?>> values() {
+		return _children.values();
+	}
+	
 	/**
 	 * A class representing nothing.
 	 */

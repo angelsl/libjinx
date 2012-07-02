@@ -3,6 +3,7 @@ package us.aaronweiss.libjinx.exec;
 import java.io.IOException;
 import org.angelsl.ms.libjinx.NXException;
 import org.angelsl.ms.libjinx.NXFile;
+import org.angelsl.ms.libjinx.NXNode;
 
 /**
  * A simple tool for benchmarking angelsl's libjinx
@@ -19,7 +20,12 @@ public class JinxBenchmark {
 		long startNano = System.nanoTime();
 		long start = System.currentTimeMillis();
 		try {
-			new NXFile("Data.nx");
+			NXFile nx = new NXFile("Data.nx");
+			for (NXNode<?> node : nx.getBaseNode()) {
+				System.out.println("\t" + node.getName() + ": ");
+				System.out.println("\t\tNode Children Count: " + node.childCount());
+			}
+			nx.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (NXException e) {
@@ -30,5 +36,4 @@ public class JinxBenchmark {
 		System.out.println("libjinx: bench: end");
 		System.out.println("libjinx: bench: " + (end - start) + " ms " + (endNano - startNano) + " µs");
 	}
-
 }

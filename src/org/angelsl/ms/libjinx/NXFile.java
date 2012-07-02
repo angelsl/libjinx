@@ -53,7 +53,6 @@ public class NXFile {
 	private long[] _bmpOffTbl = null;
 	private long[] _mp3OffTbl = null;
 	NXNode<?>[] _nodeTbl = null;
-
 	private int _nodeId = 0;
 
 	private static ByteBuffer getByteBuffer(String path) throws IOException {
@@ -236,5 +235,9 @@ public class NXFile {
 		_mp3OffTbl = new long[(int) mp3Count];
 		for (int i = 0; i < mp3Count; ++i)
 			_mp3OffTbl[i] = _ler.readLong();
+	}
+	
+	public void close() {
+		// TODO: close stuff?
 	}
 }
