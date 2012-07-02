@@ -1,2 +1,8 @@
+<<<<<<< HEAD
 .DS_Store
 bin/
+=======
+
+*.iml
+/target
+>>>>>>> 90b3c02a242d07b17d337e3570ff28d148d054d7
