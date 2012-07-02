@@ -79,6 +79,7 @@ public class NXCanvasNode extends NXNode<BufferedImage> {
                     int a = out.get() & 0xFF;
                     bi.setRGB(W, H, (a << 24) | (r << 16) | (g << 8) | b);
                 }
+                _value = bi;
                return bi;
             }
             return _value;
